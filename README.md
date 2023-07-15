@@ -4,7 +4,7 @@
 
 ```bash
 $ yarn
-$ touch sessions
+$ mkdir sessions
 $ yarn start
 
 $ php artisan migrate
