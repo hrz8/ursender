@@ -6,9 +6,9 @@ import * as controller from './../controllers/sessionsController.js'
 
 const router = Router()
 
-router.get('/find/:id', sessionValidator, controller.find);
+router.get('/find/:id', sessionValidator, controller.find)
 
-router.get('/server-status', controller.find);
+router.get('/server-status', controller.find)
 
 router.get('/status/:id', sessionValidator, controller.status)
 

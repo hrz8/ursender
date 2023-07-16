@@ -4,8 +4,9 @@ import response from './../response.js'
 const getMessages = async (req, res) => {
     const session = getSession(res.locals.sessionId)
 
-    /* eslint-disable camelcase */
     const { jid } = req.params
+
+    /* eslint-disable camelcase */
     const { limit = 25, cursor_id = null, cursor_fromMe = null } = req.query
 
     const cursor = {}

@@ -1,4 +1,4 @@
-"use strict";
+'use strict'
 
 import { getSession, getChatList, isExists, sendMessage, formatGroup } from './../whatsapp.js'
 import response from './../response.js'
