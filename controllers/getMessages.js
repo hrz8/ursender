@@ -1,4 +1,4 @@
-import { getSession } from '../whatsapp.origin.js'
+import { getSession } from '../whatsapp.js'
 import response from './../response.js'
 
 const getMessages = async (req, res) => {

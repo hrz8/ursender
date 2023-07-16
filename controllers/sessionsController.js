@@ -1,4 +1,4 @@
-import { isSessionExists, createSession, getSession, deleteSession } from './../whatsapp.origin.js'
+import { isSessionExists, createSession, getSession, deleteSession } from './../whatsapp.js'
 import response from './../response.js'
 import * as fs from 'fs';
 

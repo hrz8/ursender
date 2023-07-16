@@ -2,7 +2,7 @@ import 'dotenv/config'
 import express from 'express'
 import nodeCleanup from 'node-cleanup'
 import routes from './routes.js'
-import { init, cleanup } from './whatsapp.origin.js'
+import { init, cleanup } from './whatsapp.js'
 import cors from 'cors'
 
 const app = express()

@@ -1,4 +1,4 @@
-import { isSessionExists } from '../whatsapp.origin.js'
+import { isSessionExists } from '../whatsapp.js'
 import response from './../response.js'
 
 const validate = (req, res, next) => {
