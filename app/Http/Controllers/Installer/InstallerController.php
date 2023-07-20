@@ -5,15 +5,15 @@ namespace App\Http\Controllers\Installer;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Traits\Dotenv;
-use Session;
-use Artisan;
-use Config;
-use DB;
-use File;
-use Cache;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Session;
+
 class InstallerController extends Controller
 {
-
     use Dotenv;
     /**
      * Display a listing of the resource.
@@ -25,8 +25,9 @@ class InstallerController extends Controller
         if (file_exists('uploads/installed')) {
             return redirect('/');
         }
-        \Cache::forget('files');
-        \Cache::forget('installed');
+
+        Cache::forget('files');
+        Cache::forget('installed');
 
         $phpversion = phpversion();
         $mbstring = extension_loaded('mbstring');
@@ -48,9 +49,9 @@ class InstallerController extends Controller
             'tokenizer' => $tokenizer,
             'xml' => $xml,
         ];
-        return view('installer.requirements',compact('extentions'));
-    }
 
+        return view('installer.requirements', compact('extentions'));
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -70,43 +71,34 @@ class InstallerController extends Controller
             'db_pass' => 'nullable|max:50',
         ]);
 
-        $this->editEnv('APP_URL',url('/'));
-        $this->editEnv('APP_NAME',$request->site_name);
+        $this->editEnv('APP_URL', url('/'));
+        $this->editEnv('APP_NAME', $request->site_name);
 
-        $this->editEnv('DB_CONNECTION',$request->db_connection);
-        $this->editEnv('DB_HOST',$request->db_host);
-        $this->editEnv('DB_PORT',$request->db_port);
+        $this->editEnv('DB_CONNECTION', $request->db_connection);
+        $this->editEnv('DB_HOST', $request->db_host);
+        $this->editEnv('DB_PORT', $request->db_port);
 
-        $this->editEnv('DB_DATABASE',$request->db_name);
-        $this->editEnv('DB_USERNAME',$request->db_user);
-
-       
-        
-
+        $this->editEnv('DB_DATABASE', $request->db_name);
+        $this->editEnv('DB_USERNAME', $request->db_user);
 
         if (!empty($request->db_pass)) {
-            $this->editEnv('DB_PASSWORD',$request->db_pass);
+            $this->editEnv('DB_PASSWORD', $request->db_pass);
         }
-       
-       try {
+
+        try {
             $pdo = DB::connection()->getPdo();
 
             if (!$pdo) {
 
-                return response()->json(['message'=>'Could not connect to the database.  Please check your configuration'],403);
+                return response()->json(['message' => 'Could not connect to the database.  Please check your configuration'], 403);
             }
 
-            
-            return response()->json(['message'=>'Installtion in processed']);
-            
-
+            return response()->json(['message' => 'Installtion in processed']);
         } catch (\Exception $e) {
-           
-            return response()->json(['message'=>'Could not connect to the database.  Please check your configuration'],401);
-            
+
+            return response()->json(['message' => 'Could not connect to the database.  Please check your configuration'], 401);
         }
     }
-
 
     public function migrate()
     {
@@ -117,27 +109,26 @@ class InstallerController extends Controller
                 '--force' => true,
             ]);
 
-            Artisan::call('db:seed',[
+            Artisan::call('db:seed', [
                 '--force' => true,
             ]);
 
+            File::put('uploads/installed', Cache::get('installed'));
 
-            File::put('uploads/installed',\Cache::get('installed'));
-
-            if (\Cache::has('files')) {
-                $files = \Cache::get('files');
+            if (Cache::has('files')) {
+                $files = Cache::get('files');
 
                 foreach ($files ?? [] as $key => $file) {
                     $path = $file->basepath == 1 ? base_path($file->replace_path) : $file->replace_path;
-                    $context = \Http::get($file->file);
+                    $context = Http::get($file->file);
                     $context = $context->body();
-                    File::put($path,$context);
+                    File::put($path, $context);
                 }
             }
 
-            return response()->json(['message'=>'Installtion complete', 'redirect'=> url('install/congratulations')]);
-        } catch (Exception $e) {
-             return response()->json(['message'=>'Please create a fresh new database'],401);
+            return response()->json(['message' => 'Installtion complete', 'redirect' => url('install/congratulations')]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Please create a fresh new database'], 401);
         }
     }
 
@@ -151,23 +142,19 @@ class InstallerController extends Controller
     {
         if ($type == 'purchase') {
             if (!Cache::has('files')) {
-             return view('installer.purchase');
-           }
-        }
-
-        elseif ($type == 'info') {
+                return view('installer.purchase');
+            }
+        } elseif ($type == 'info') {
             if (!Cache::has('files')) {
-                Session::flash('purchase-key-error','Activate your license first');
+                Session::flash('purchase-key-error', 'Activate your license first');
 
                 return redirect('/install/purchase');
             }
 
             return view('installer.info');
-        }
-
-        elseif ($type == 'congratulations') {
+        } elseif ($type == 'congratulations') {
             if (!Cache::has('files')) {
-                Session::flash('purchase-key-error','Activate your license first');
+                Session::flash('purchase-key-error', 'Activate your license first');
                 return redirect('/install/purchase');
             }
 
@@ -175,43 +162,37 @@ class InstallerController extends Controller
         }
     }
 
-
     public function verify(Request $request)
     {
         if (file_exists('uploads/installed')) {
             return redirect('/');
         }
 
-       
+        $checkArr = explode('-', $request->purchase_key);
 
-        $checkArr= explode('-', $request->purchase_key);
-        
-         if (count($checkArr) != 5) {
-           Session::flash('purchase-key-error','The purchase key is invalid');
-           return response()->json(['message'=>'The purchase key is invalid', 'redirect'=> url('install/purchase')]);
-         }
+        if (count($checkArr) != 5) {
+            Session::flash('purchase-key-error', 'The purchase key is invalid');
+            return response()->json(['message' => 'The purchase key is invalid', 'redirect' => url('install/purchase')]);
+        }
 
         $body['purchase_key'] = $request->purchase_key;
         $body['url'] = url('/');
 
-        $response =  \Http::post('https://devapi.lpress.xyz/api/verify',$body);
+        $response =  Http::post('https://devapi.lpress.xyz/api/verify', $body);
+
         if ($response->status() != 200) {
-           $response = json_decode($response->body());
-           
-           return response()->json(['message'=>$response->error, 'redirect'=> url('install/purchase')],403);
+            $response = json_decode($response->body());
+
+            return response()->json(['message' => $response->error, 'redirect' => url('install/purchase')], 403);
         }
-        
+
         $response = json_decode($response->body());
-        
-        $this->editEnv('SITE_KEY',$response->SITE_KEY ?? '');
 
-        \Cache::put('files',$response->files);
-        \Cache::put('installed',$response->license);
-        
+        $this->editEnv('SITE_KEY', $response->SITE_KEY ?? '');
 
-        return response()->json(['message'=>'Verification success', 'redirect'=> url('install/info')]);
+        Cache::put('files', $response->files);
+        Cache::put('installed', $response->license);
+
+        return response()->json(['message' => 'Verification success', 'redirect' => url('install/info')]);
     }
-
-   
-
 }

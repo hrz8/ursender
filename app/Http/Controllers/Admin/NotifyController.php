@@ -7,14 +7,14 @@ use Illuminate\Http\Request;
 use App\Models\Notification;
 use App\Traits\Notifications;
 use App\Models\User;
-use Auth;
+
 class NotifyController extends Controller
 {
-   
     use Notifications;
 
-    public function __construct(){
-         $this->middleware('permission:notification'); 
+    public function __construct()
+    {
+        $this->middleware('permission:notification');
     }
 
     /**
@@ -28,27 +28,25 @@ class NotifyController extends Controller
 
         if (!empty($request->search)) {
             if ($request->type == 'email') {
-                $notifications = $notifications->whereHas('user',function($q) use ($request){
-                    return $q->where('email',$request->search);
+                $notifications = $notifications->whereHas('user', function ($q) use ($request) {
+                    return $q->where('email', $request->search);
                 });
-            }
-            else{
-                $notifications = $notifications->where($request->type,'LIKE','%'.$request->search.'%');
+            } else {
+                $notifications = $notifications->where($request->type, 'LIKE', '%' . $request->search . '%');
             }
         }
 
         $notifications = $notifications->with('user')->latest()->paginate(30);
         $type = $request->type ?? '';
 
-        $totalNotifications =Notification::count();
-        $readNotifications  =Notification::where('seen',1)->count();
-        $unreadNotifications=Notification::where('seen',0)->count();
-       
-        return view('admin.logs.notifications',compact('notifications','request','type','totalNotifications','readNotifications','unreadNotifications'));
+        $totalNotifications = Notification::count();
+        $readNotifications  = Notification::where('seen', 1)->count();
+        $unreadNotifications = Notification::where('seen', 0)->count();
+
+        return view('admin.logs.notifications', compact('notifications', 'request', 'type', 'totalNotifications', 'readNotifications', 'unreadNotifications'));
     }
 
-
-     /**
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -61,10 +59,10 @@ class NotifyController extends Controller
             'email' => 'required|email',
             'description'  => 'required',
             'url'  => 'required',
-            
+
         ]);
 
-        $user = User::where('email',$request->email)->first();
+        $user = User::where('email', $request->email)->first();
         if (empty($user)) {
             return response()->json([
                 'message'  => __('User is not exist')
@@ -83,11 +81,7 @@ class NotifyController extends Controller
             'redirect' => route('admin.notification.index'),
             'message'  => __('Notification Created successfully.')
         ]);
-
-
     }
-
-    
 
     /**
      * Remove the specified resource from storage.
@@ -105,5 +99,4 @@ class NotifyController extends Controller
             'message'  => __('Notification Removed successfully.')
         ]);
     }
-
 }

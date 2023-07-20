@@ -5,15 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use App\Traits\Uploader;
+
 class PartnerController extends Controller
 {
-     use Uploader;
+    use Uploader;
 
-     public function __construct(){
-         $this->middleware('permission:partners'); 
+    public function __construct()
+    {
+        $this->middleware('permission:partners');
     }
     /**
      * Display a listing of the resource.
@@ -24,14 +24,11 @@ class PartnerController extends Controller
     {
         $brands         = Category::whereType('brand')->latest()->paginate(10);
         $totalBrands    = Category::whereType('brand')->count();
-        $activeBrands   = Category::whereType('brand')->where('status',1)->count();
-        $inActiveBrands = Category::whereType('brand')->where('status',0)->count();
-       
+        $activeBrands   = Category::whereType('brand')->where('status', 1)->count();
+        $inActiveBrands = Category::whereType('brand')->where('status', 0)->count();
 
-        return view('admin.brand.index', compact('brands','totalBrands','activeBrands','inActiveBrands'));
+        return view('admin.brand.index', compact('brands', 'totalBrands', 'activeBrands', 'inActiveBrands'));
     }
-
-    
 
     /**
      * Store a newly created resource in storage.
@@ -41,13 +38,13 @@ class PartnerController extends Controller
      */
     public function store(Request $request)
     {
-         $request->validate([
+        $request->validate([
             'url' => ['max:100'],
-            'image' => ['required','image','max:1024'],
-            
+            'image' => ['required', 'image', 'max:1024'],
+
         ]);
 
-        $preview = $this->saveFile($request,'image');
+        $preview = $this->saveFile($request, 'image');
 
         Category::create([
             'title' => $request->url ?? '#',
@@ -63,8 +60,6 @@ class PartnerController extends Controller
         ]);
     }
 
-    
-
     /**
      * Update the specified resource in storage.
      *
@@ -77,18 +72,17 @@ class PartnerController extends Controller
 
         $request->validate([
             'url' => ['max:100'],
-            'image' => ['image','max:1024'],    
+            'image' => ['image', 'max:1024'],
         ]);
 
-        $brand = Category::where('type','brand')->findOrFail($id);
+        $brand = Category::where('type', 'brand')->findOrFail($id);
 
         if ($request->hasFile('image')) {
-            $preview = $this->saveFile($request,'image');
+            $preview = $this->saveFile($request, 'image');
             if (!empty($brand->slug)) {
                 $this->removeFile($brand->slug);
             }
-        }
-        else{
+        } else {
             $preview = $brand->slug;
         }
 
@@ -115,7 +109,7 @@ class PartnerController extends Controller
     public function destroy($id)
     {
         $brand = Category::findOrFail($id);
-        
+
         $this->removeFile($brand->slug);
 
         $brand->delete();

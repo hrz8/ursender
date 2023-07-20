@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Gateway;
 
@@ -15,12 +14,12 @@ class GatewayTableSeeder extends Seeder
      */
     public function run()
     {
-         $gateways = [
+        $gateways = [
             [
                 'id' => '1',
                 'name' => 'paypal',
                 'logo' => '/uploads/payment-gateway/paypal.png',
-                'min_amount' => 1, 
+                'min_amount' => 1,
                 'max_amount' => 1000,
                 'charge' => '2',
                 'namespace' => 'App\\Gateway\\Paypal',
@@ -29,7 +28,7 @@ class GatewayTableSeeder extends Seeder
                 'test_mode' => '1',
                 'status' => '0',
                 'phone_required' => '0',
-                'data' => '{"client_id":"","client_secret":""}', 
+                'data' => '{"client_id":"","client_secret":""}',
                 'currency' => 'usd',
                 'created_at' => now(),
                 'updated_at' => now()
@@ -47,8 +46,8 @@ class GatewayTableSeeder extends Seeder
                 'test_mode' => '1',
                 'status' => '0',
                 'phone_required' => '0',
-                'data' => '{"publishable_key":"","secret_key":""}', 
-                'currency' => 'usd', 
+                'data' => '{"publishable_key":"","secret_key":""}',
+                'currency' => 'usd',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
@@ -56,7 +55,7 @@ class GatewayTableSeeder extends Seeder
                 'id' => '3',
                 'name' => 'mollie',
                 'logo' => '/uploads/payment-gateway/mollie.png',
-                'min_amount' => 1, 
+                'min_amount' => 1,
                 'max_amount' => 1000,
                 'charge' => '2',
                 'namespace' => 'App\\Gateway\\Mollie',
@@ -65,8 +64,8 @@ class GatewayTableSeeder extends Seeder
                 'test_mode' => '1',
                 'status' => '1',
                 'phone_required' => '0',
-                'data' => '{"api_key":"test_WqUGsP9qywy3eRVvWMRayxmVB5dx2r"}', 
-                'currency' => 'usd', 
+                'data' => '{"api_key":"test_WqUGsP9qywy3eRVvWMRayxmVB5dx2r"}',
+                'currency' => 'usd',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
@@ -74,7 +73,7 @@ class GatewayTableSeeder extends Seeder
                 'id' => '4',
                 'name' => 'paystack',
                 'logo' => '/uploads/payment-gateway/paystack.png',
-                'min_amount' => 1, 
+                'min_amount' => 1,
                 'max_amount' => 1000,
                 'charge' => '2',
                 'namespace' => 'App\\Gateway\\Paystack',
@@ -83,8 +82,8 @@ class GatewayTableSeeder extends Seeder
                 'test_mode' => '1',
                 'status' => '0',
                 'phone_required' => '0',
-                'data' => '{"public_key":"","secret_key":""}', 
-                'currency' => null, 
+                'data' => '{"public_key":"","secret_key":""}',
+                'currency' => null,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
@@ -92,7 +91,7 @@ class GatewayTableSeeder extends Seeder
                 'id' => '5',
                 'name' => 'razorpay',
                 'logo' => '/uploads/payment-gateway/rajorpay.png',
-                'min_amount' => 1, 
+                'min_amount' => 1,
                 'max_amount' => 10000,
                 'charge' => '2',
                 'namespace' => 'App\\Gateway\\Razorpay',
@@ -102,7 +101,7 @@ class GatewayTableSeeder extends Seeder
                 'status' => '0',
                 'phone_required' => '0',
                 'data' => '{"key_id":"","key_secret":""}',
-                'currency' => 'inr', 
+                'currency' => 'inr',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
@@ -110,7 +109,7 @@ class GatewayTableSeeder extends Seeder
                 'id' => '6',
                 'name' => 'instamojo',
                 'logo' => '/uploads/payment-gateway/instamojo.png',
-                'min_amount' => 1, 
+                'min_amount' => 1,
                 'max_amount' => 1000,
                 'charge' => '2',
                 'namespace' => 'App\\Gateway\\Instamojo',
@@ -119,8 +118,8 @@ class GatewayTableSeeder extends Seeder
                 'test_mode' => '1',
                 'status' => '0',
                 'phone_required' => '1',
-                'data' => '{"x_api_key":"","x_auth_token":""}', 
-                'currency' => 'inr', 
+                'data' => '{"x_api_key":"","x_auth_token":""}',
+                'currency' => 'inr',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
@@ -128,7 +127,7 @@ class GatewayTableSeeder extends Seeder
                 'id' => '7',
                 'name' => 'toyyibpay',
                 'logo' => '/uploads/payment-gateway/toyybipay.png',
-                'min_amount' => 1, 
+                'min_amount' => 1,
                 'max_amount' => 1000,
                 'charge' => '2',
                 'namespace' => 'App\\Gateway\\Toyyibpay',
@@ -146,7 +145,7 @@ class GatewayTableSeeder extends Seeder
                 'id' => '8',
                 'name' => 'flutterwave',
                 'logo' => '/uploads/payment-gateway/flutterwave.png',
-                'min_amount' => 1, 
+                'min_amount' => 1,
                 'max_amount' => 1000,
                 'charge' => '2',
                 'namespace' => 'App\\Gateway\\Flutterwave',
@@ -155,8 +154,8 @@ class GatewayTableSeeder extends Seeder
                 'test_mode' => '1',
                 'status' => '0',
                 'phone_required' => '1',
-                'data' => '{"public_key":"","secret_key":"","encryption_key":"","payment_options":"card"}', 
-                'currency' => null, 
+                'data' => '{"public_key":"","secret_key":"","encryption_key":"","payment_options":"card"}',
+                'currency' => null,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
@@ -164,7 +163,7 @@ class GatewayTableSeeder extends Seeder
                 'id' => '9',
                 'name' => 'payu',
                 'logo' => '/uploads/payment-gateway/payu.png',
-                'min_amount' => 1, 
+                'min_amount' => 1,
                 'max_amount' => 1000,
                 'charge' => '2',
                 'namespace' => 'App\\Gateway\\Payu',
@@ -174,7 +173,7 @@ class GatewayTableSeeder extends Seeder
                 'status' => '0',
                 'phone_required' => '1',
                 'data' => '{"merchant_key":"","merchant_salt":"","auth_header":""}',
-                'currency'=>null,
+                'currency' => null,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
@@ -182,7 +181,7 @@ class GatewayTableSeeder extends Seeder
                 'id' => '10',
                 'name' => 'thawani',
                 'logo' => '/uploads/payment-gateway/uhawan.png',
-                'min_amount' => 1, 
+                'min_amount' => 1,
                 'max_amount' => 1000,
                 'charge' => '1',
                 'namespace' => 'App\\Gateway\\Thawani',
@@ -192,14 +191,14 @@ class GatewayTableSeeder extends Seeder
                 'status' => '0',
                 'phone_required' => '1',
                 'data' => '{"secret_key":"","publishable_key":""}',
-                'currency'=> null,
+                'currency' => null,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
-                'id' => '11','name' => 'mercadopago',
+                'id' => '11', 'name' => 'mercadopago',
                 'logo' => '/uploads/payment-gateway/mercado-pago.png',
-                'min_amount' => 1, 
+                'min_amount' => 1,
                 'max_amount' => 1000,
                 'charge' => '2',
                 'namespace' => 'App\\Gateway\\Mercado',
@@ -208,12 +207,13 @@ class GatewayTableSeeder extends Seeder
                 'test_mode' => '1',
                 'status' => '0',
                 'phone_required' => '0',
-                'data' => '{"secret_key":"","public_key":""}', 
-                'currency' => null, 
+                'data' => '{"secret_key":"","public_key":""}',
+                'currency' => null,
                 'created_at' => now(),
                 'updated_at' => now()
             ]
         ];
+
         Gateway::insert($gateways);
     }
 }

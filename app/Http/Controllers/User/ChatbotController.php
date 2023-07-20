@@ -7,8 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Reply;
 use App\Models\Template;
 use App\Models\Device;
-use Auth;
-use DB;
+use Illuminate\Support\Facades\Auth;
+
 class ChatbotController extends Controller
 {
     /**
@@ -18,17 +18,15 @@ class ChatbotController extends Controller
      */
     public function index()
     {
-        $templates=Template::where('user_id',Auth::id())->where('status',1)->latest()->get();
-        $replies=Reply::where('user_id',Auth::id())->with('device')->latest()->paginate(20);
-        $total_replies=Reply::where('user_id',Auth::id())->count();
-        $template_replies=Reply::where('user_id',Auth::id())->where('template_id','!=',null)->count();
-        $text_replies=Reply::where('user_id',Auth::id())->where('template_id',null)->count();
-        $devices = Device::where('user_id',Auth::id())->where('status',1)->latest()->get();
+        $templates = Template::where('user_id', Auth::id())->where('status', 1)->latest()->get();
+        $replies = Reply::where('user_id', Auth::id())->with('device')->latest()->paginate(20);
+        $total_replies = Reply::where('user_id', Auth::id())->count();
+        $template_replies = Reply::where('user_id', Auth::id())->where('template_id', '!=', null)->count();
+        $text_replies = Reply::where('user_id', Auth::id())->where('template_id', null)->count();
+        $devices = Device::where('user_id', Auth::id())->where('status', 1)->latest()->get();
 
-        return view('user.chatbot.index',compact('templates','replies','total_replies','template_replies','text_replies','devices'));
+        return view('user.chatbot.index', compact('templates', 'replies', 'total_replies', 'template_replies', 'text_replies', 'devices'));
     }
-
-    
 
     /**
      * Store a newly created resource in storage.
@@ -40,8 +38,8 @@ class ChatbotController extends Controller
     {
         if (getUserPlanData('chatbot') == false) {
             return response()->json([
-                'message'=>__('Chatbot features is not available with your subscription')
-            ],401);  
+                'message' => __('Chatbot features is not available with your subscription')
+            ], 401);
         }
 
         $validated = $request->validate([
@@ -51,15 +49,14 @@ class ChatbotController extends Controller
             'device' => 'required'
         ]);
 
-        $device = Device::where('user_id',Auth::id())->findorFail($request->device);
+        $device = Device::where('user_id', Auth::id())->findorFail($request->device);
 
         if ($request->reply_type == 'template') {
-             $validated = $request->validate([
+            $validated = $request->validate([
                 'template' => 'required',
             ]);
-            $template=Template::where('user_id',Auth::id())->where('status',1)->findorFail($request->template);
-        }
-        else{
+            $template = Template::where('user_id', Auth::id())->where('status', 1)->findorFail($request->template);
+        } else {
             $validated = $request->validate([
                 'reply' => 'required|max:1000',
             ]);
@@ -71,17 +68,16 @@ class ChatbotController extends Controller
         $reply->template_id = $request->reply_type == 'template' ? $template->id : null;
         $reply->keyword = $request->keyword;
         $reply->reply = $request->reply_type != 'template' ? $request->reply : null;
-        $reply->match_type= $request->match_type == 'equal' ? 'equal' : 'like';
-        $reply->reply_type= $request->reply_type == 'template' ? 'template' : 'text';
+        $reply->match_type = $request->match_type == 'equal' ? 'equal' : 'like';
+        $reply->reply_type = $request->reply_type == 'template' ? 'template' : 'text';
         $reply->save();
 
-       return response()->json([
-                'message'  => __('Reply Created Successfully'),
-                'redirect' => route('user.chatbot.index')
-            ], 200);
+        return response()->json([
+            'message'  => __('Reply Created Successfully'),
+            'redirect' => route('user.chatbot.index')
+        ], 200);
     }
 
-    
     /**
      * Update the specified resource in storage.
      *
@@ -98,34 +94,33 @@ class ChatbotController extends Controller
             'device' => 'required'
         ]);
 
-        $device = Device::where('user_id',Auth::id())->findorFail($request->device);
+        $device = Device::where('user_id', Auth::id())->findorFail($request->device);
 
         if ($request->reply_type == 'template') {
-             $validated = $request->validate([
+            $validated = $request->validate([
                 'template' => 'required',
             ]);
-            $template=Template::where('user_id',Auth::id())->where('status',1)->findorFail($request->template);
-        }
-        else{
+            $template = Template::where('user_id', Auth::id())->where('status', 1)->findorFail($request->template);
+        } else {
             $validated = $request->validate([
                 'reply' => 'required|max:1000',
             ]);
         }
 
-        $reply =  Reply::where('user_id',Auth::id())->findorFail($id);
+        $reply =  Reply::where('user_id', Auth::id())->findorFail($id);
         $reply->user_id = Auth::id();
         $reply->device_id = $request->device;
         $reply->template_id = $request->reply_type == 'template' ? $template->id : null;
         $reply->keyword = $request->keyword;
         $reply->reply = $request->reply_type != 'template' ? $request->reply : null;
-        $reply->match_type= $request->match_type == 'equal' ? 'equal' : 'like';
-        $reply->reply_type= $request->reply_type == 'template' ? 'template' : 'text';
+        $reply->match_type = $request->match_type == 'equal' ? 'equal' : 'like';
+        $reply->reply_type = $request->reply_type == 'template' ? 'template' : 'text';
         $reply->save();
 
         return response()->json([
-                'message'  => __('Reply Created Successfully'),
-                'redirect' => route('user.chatbot.index')
-            ], 200);
+            'message'  => __('Reply Created Successfully'),
+            'redirect' => route('user.chatbot.index')
+        ], 200);
     }
 
     /**
@@ -136,7 +131,7 @@ class ChatbotController extends Controller
      */
     public function destroy($id)
     {
-        $reply =  Reply::where('user_id',Auth::id())->findorFail($id);
+        $reply =  Reply::where('user_id', Auth::id())->findorFail($id);
         $reply->delete();
 
         return response()->json([

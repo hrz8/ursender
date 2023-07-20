@@ -3,19 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Post;
-use App\Models\Postmeta;
 use App\Http\Requests\PageRequest;
 use App\Actions\Page;
-use DB;
-use Auth;
-use Cache;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Throwable;
+
 class PageController extends Controller
 {
     public function __construct()
     {
-          $this->middleware('permission:custom-page'); 
+        $this->middleware('permission:custom-page');
     }
 
     /**
@@ -25,12 +24,12 @@ class PageController extends Controller
      */
     public function index()
     {
-        $pages = Post::where('type', 'page')->orderBy('id','desc')->paginate(20);
-        $totalActivePosts=Post::where('type', 'page')->where('status',1)->count();
-        $totalInActivePosts=Post::where('type', 'page')->where('status',0)->count();
-        $totalPosts=Post::where('type', 'page')->count();
+        $pages = Post::where('type', 'page')->orderBy('id', 'desc')->paginate(20);
+        $totalActivePosts = Post::where('type', 'page')->where('status', 1)->count();
+        $totalInActivePosts = Post::where('type', 'page')->where('status', 0)->count();
+        $totalPosts = Post::where('type', 'page')->count();
 
-        return view('admin.page.index', compact('pages','totalActivePosts','totalInActivePosts','totalPosts'));
+        return view('admin.page.index', compact('pages', 'totalActivePosts', 'totalInActivePosts', 'totalPosts'));
     }
 
     /**
@@ -40,7 +39,7 @@ class PageController extends Controller
      */
     public function create()
     {
-       return view('admin.page.create');
+        return view('admin.page.create');
     }
 
     /**
@@ -55,11 +54,10 @@ class PageController extends Controller
 
         DB::beginTransaction();
         try {
-            
-             $page = $page->create($request);
+
+            $page = $page->create($request);
 
             DB::commit();
-
         } catch (Throwable $th) {
             DB::rollback();
 
@@ -69,12 +67,12 @@ class PageController extends Controller
         }
 
         return response()->json([
-                'message' => __("Page Created Successfully"),
-                'redirect' => route('admin.page.index')
-            ]);
+            'message' => __("Page Created Successfully"),
+            'redirect' => route('admin.page.index')
+        ]);
     }
 
-   
+
 
     /**
      * Show the form for editing the specified resource.
@@ -84,10 +82,10 @@ class PageController extends Controller
      */
     public function edit($id)
     {
-        $info = Post::with('description','seo')->findOrFail($id);
-        $seo=json_decode($info->seo->value ?? '');
+        $info = Post::with('description', 'seo')->findOrFail($id);
+        $seo = json_decode($info->seo->value ?? '');
 
-        return view('admin.page.edit', compact('info','seo'));
+        return view('admin.page.edit', compact('info', 'seo'));
     }
 
     /**
@@ -97,15 +95,15 @@ class PageController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(PageRequest $request,$id, Page $page)
+    public function update(PageRequest $request, $id, Page $page)
     {
         $validated = $request->validated();
-       
+
 
         DB::beginTransaction();
         try {
-             
-            $page = $page->update($request,$id);
+
+            $page = $page->update($request, $id);
 
             DB::commit();
 

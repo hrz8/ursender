@@ -7,11 +7,12 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\Plan;
 use App\Models\User;
-use Hash;
-use Str;
-use Auth;
 use App\Traits\Seo;
-use Session;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
+
 class PricingController extends Controller
 {
 
@@ -24,12 +25,17 @@ class PricingController extends Controller
      */
     public function index()
     {
-        $faqs = Post::where('type','faq')->where('featured',1)->where('lang',app()->getLocale())->with('excerpt')->latest()->get();
-        $plans = Plan::where('status',1)->latest()->get();
+        $faqs = Post::where('type', 'faq')
+            ->where('featured', 1)
+            ->where('lang', app()->getLocale())
+            ->with('excerpt')
+            ->latest()
+            ->get();
+        $plans = Plan::where('status', 1)->latest()->get();
 
         $this->metadata('seo_pricing');
 
-        return view('frontend.plans',compact('faqs','plans'));
+        return view('frontend.plans', compact('faqs', 'plans'));
     }
 
     /**
@@ -41,15 +47,14 @@ class PricingController extends Controller
      */
     public function register(Request $request, $id)
     {
-        $plan = Plan::where('status',1)->findorFail($id);
+        $plan = Plan::where('status', 1)->findorFail($id);
 
         $meta['title'] = $plan->title ?? '';
         $this->pageMetaData($meta);
 
 
-        return view('frontend.register',compact('plan','request'));
+        return view('frontend.register', compact('plan', 'request'));
     }
-
 
     /**
      * register a user with plan
@@ -66,7 +71,7 @@ class PricingController extends Controller
             'password' => ['required', 'string', 'min:8'],
         ]);
 
-        $plan = Plan::where('status',1)->findorFail($id);
+        $plan = Plan::where('status', 1)->findorFail($id);
 
         $user              = new User;
         $user->name        = $request->name;
@@ -83,12 +88,12 @@ class PricingController extends Controller
         Auth::login($user);
 
         if ($user->will_expire == null) {
-            return redirect('user/subscription/'.$plan->id);
+            return redirect('user/subscription/' . $plan->id);
         }
 
-        Session::put('new-user',__('Lets create a whatsapp device'));
-        return redirect('/user/device/create');
+        Session::put('new-user', __('Lets create a whatsapp device'));
 
+        return redirect('/user/device/create');
     }
 
     /**
@@ -99,9 +104,10 @@ class PricingController extends Controller
         $rend = Str::random(50);
         $check = User::where('authkey', $rend)->first();
 
-        if($check == true){
+        if ($check == true) {
             $rend = $this->generateAuthKey();
         }
+
         return $rend;
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Rules;
+
 use Illuminate\Contracts\Validation\Rule;
 
 class Phone implements Rule
@@ -50,6 +51,7 @@ class Phone implements Rule
         $conditions[] = strlen($value) >= 10;
         $conditions[] = strlen($value) <= 16;
         $conditions[] = preg_match("/[^\d]/i", $value) === 0;
+
         return (bool) array_product($conditions);
     }
 
@@ -75,6 +77,7 @@ class Phone implements Rule
         $conditions[] = strlen($value) >= 9;
         $conditions[] = strlen($value) <= 16;
         $conditions[] = preg_match("/[^\d+]/i", $value) === 0;
+
         return (bool) array_product($conditions);
     }
 
@@ -88,6 +91,7 @@ class Phone implements Rule
     {
         $conditions = [];
         $conditions[] = preg_match("/^(?:\+1|1)?\s?-?\(?\d{3}\)?(\s|-)?\d{3}-\d{4}$/i", $value) > 0;
+
         return (bool) array_product($conditions);
     }
 }

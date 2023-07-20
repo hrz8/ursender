@@ -5,17 +5,16 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
+
 class AdminController extends Controller
 {
-    public function __construct(){
-        $this->middleware('permission:admin'); 
+    public function __construct()
+    {
+        $this->middleware('permission:admin');
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -23,10 +22,9 @@ class AdminController extends Controller
      */
     public function index()
     {
-       
-        $users = User::where('role','admin')->where('id','!=',1)->latest()->get();
+
+        $users = User::where('role', 'admin')->where('id', '!=', 1)->latest()->get();
         return view('admin.admin.index', compact('users'));
-        
     }
 
     /**
@@ -36,10 +34,8 @@ class AdminController extends Controller
      */
     public function create()
     {
-       
         $roles  = Role::all();
         return view('admin.admin.create', compact('roles'));
-        
     }
 
     /**
@@ -70,14 +66,11 @@ class AdminController extends Controller
             $user->assignRole($request->roles);
         }
 
-
         return response()->json([
             'redirect' => route('admin.admin.index'),
             'message' => __('Admin created successfully !!')
         ]);
     }
-
-  
 
     /**
      * Show the form for editing the specified resource.
@@ -87,11 +80,9 @@ class AdminController extends Controller
      */
     public function edit($id)
     {
-       
         $user = User::find($id);
         $roles  = Role::all();
         return view('admin.admin.edit', compact('user', 'roles'));
-        
     }
 
     /**
@@ -127,9 +118,8 @@ class AdminController extends Controller
             $user->assignRole($request->roles);
         }
 
-
-       return response()->json([
-        'message' => __('Admin Updated successfully !!')
+        return response()->json([
+            'message' => __('Admin Updated successfully !!')
         ]);
     }
 
@@ -141,12 +131,11 @@ class AdminController extends Controller
      */
     public function destroy($id)
     {
-
         User::destroy($id);
 
-       return response()->json([
-        'redirect' => route('admin.admin.index'),
-        'message' => __('Admin deleted successfully !!')
+        return response()->json([
+            'redirect' => route('admin.admin.index'),
+            'message' => __('Admin deleted successfully !!')
         ]);
     }
 }

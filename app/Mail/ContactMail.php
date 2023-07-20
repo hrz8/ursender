@@ -13,7 +13,7 @@ class ContactMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $mailcontent;
+    public $mailContent;
     /**
      * Create a new message instance.
      *
@@ -21,7 +21,7 @@ class ContactMail extends Mailable
      */
     public function __construct($data)
     {
-        $this->mailcontent = $data;
+        $this->mailContent = $data;
     }
 
     /**
@@ -32,7 +32,7 @@ class ContactMail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: '['.ucfirst(env('APP_NAME')).'] '.$this->mailcontent['subject'],
+            subject: '[' . ucfirst(env('APP_NAME')) . '] ' . $this->mailContent['subject'],
         );
     }
 
@@ -47,11 +47,11 @@ class ContactMail extends Mailable
         return new Content(
             markdown: 'mails.contact',
             with: [
-                'name'    => $this->mailcontent['name'],
-                'email'   => $this->mailcontent['email'],
-                'phone'   => $this->mailcontent['phone'],
-                'subject' => $this->mailcontent['subject'],
-                'message' => $this->mailcontent['message'],
+                'name'    => $this->mailContent['name'],
+                'email'   => $this->mailContent['email'],
+                'phone'   => $this->mailContent['phone'],
+                'subject' => $this->mailContent['subject'],
+                'message' => $this->mailContent['message'],
             ],
         );
     }

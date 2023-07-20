@@ -4,8 +4,9 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Auth;
 use App\Models\Support;
+use Illuminate\Support\Facades\Auth;
+
 class SupportController extends Controller
 {
     /**
@@ -15,12 +16,12 @@ class SupportController extends Controller
      */
     public function index()
     {
-       $supports=Support::where('user_id',Auth::id())->latest()->withCount('conversations')->paginate(20);
-       $openSupport=Support::where('user_id',Auth::id())->where('status',1)->count();
-       $pendingSupport=Support::where('user_id',Auth::id())->where('status',2)->count();
-       $total=Support::where('user_id',Auth::id())->count();
+        $supports = Support::where('user_id', Auth::id())->latest()->withCount('conversations')->paginate(20);
+        $openSupport = Support::where('user_id', Auth::id())->where('status', 1)->count();
+        $pendingSupport = Support::where('user_id', Auth::id())->where('status', 2)->count();
+        $total = Support::where('user_id', Auth::id())->count();
 
-       return view('user.support.index',compact('supports','openSupport','pendingSupport','total'));
+        return view('user.support.index', compact('supports', 'openSupport', 'pendingSupport', 'total'));
     }
 
     /**
@@ -46,8 +47,8 @@ class SupportController extends Controller
             'message' => 'required|max:1000',
         ]);
 
-        $support= new Support;
-        $support->user_id=Auth::id();
+        $support = new Support;
+        $support->user_id = Auth::id();
         $support->subject = $request->subject;
         $support->save();
 
@@ -58,7 +59,7 @@ class SupportController extends Controller
         ]);
 
         return response()->json([
-            'redirect' => url('user/support/'.$support->id),
+            'redirect' => url('user/support/' . $support->id),
             'message' => __('New Ticket Generated Successfully')
         ]);
     }
@@ -71,12 +72,12 @@ class SupportController extends Controller
      */
     public function show($id)
     {
-        $support=Support::where('user_id',Auth::id())->with('conversations')->findorFail($id);
+        $support = Support::where('user_id', Auth::id())->with('conversations')->findorFail($id);
 
-         return view('user.support.show',compact('support'));
+        return view('user.support.show', compact('support'));
     }
 
-   
+
 
     /**
      * Update the specified resource in storage.
@@ -91,7 +92,7 @@ class SupportController extends Controller
             'message' => 'required|max:1000',
         ]);
 
-        $support=Support::where('user_id',Auth::id())->where('status',1)->findorFail($id);
+        $support = Support::where('user_id', Auth::id())->where('status', 1)->findorFail($id);
 
         $support->conversations()->create([
             'comment'  => $request->message,
@@ -101,9 +102,8 @@ class SupportController extends Controller
         ]);
 
         return response()->json([
-            'redirect' => url('user/support/'.$support->id),
+            'redirect' => url('user/support/' . $support->id),
             'message' => __('Replied Successfully')
         ]);
     }
-
 }

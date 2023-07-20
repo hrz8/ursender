@@ -4,19 +4,19 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use App\Traits\Uploader;
 use App\Models\Post;
-use App\Models\Postmeta;
-use DB;
-use Auth;
-use Str;
+use Throwable;
 
 class FeaturesController extends Controller
 {
     use Uploader;
 
-   public function __construct(){
-        $this->middleware('permission:features'); 
+    public function __construct()
+    {
+        $this->middleware('permission:features');
     }
     /**
      * Display a listing of the resource.
@@ -25,10 +25,10 @@ class FeaturesController extends Controller
      */
     public function index()
     {
-        $posts = Post::where('type','feature')->with('excerpt','preview')->latest()->paginate(20);
-        $languages = get_option('languages',true);
+        $posts = Post::where('type', 'feature')->with('excerpt', 'preview')->latest()->paginate(20);
+        $languages = get_option('languages', true);
 
-        return view('admin.features.index',compact('posts','languages'));
+        return view('admin.features.index', compact('posts', 'languages'));
     }
 
     /**
@@ -38,12 +38,11 @@ class FeaturesController extends Controller
      */
     public function create()
     {
-        $languages = get_option('languages',true);
+        $languages = get_option('languages', true);
 
         return view('admin.features.create', compact('languages'));
     }
 
-    
     /**
      * Store a newly created resource in storage.
      *
@@ -59,19 +58,19 @@ class FeaturesController extends Controller
             'preview_image'  => 'required|image|max:1024',
             'banner_image'  => 'required|image|max:2048',
         ]);
-       
+
 
         DB::beginTransaction();
         try {
-            
-           $post = new Post;
-           $post->title = $request->title;
-           $post->slug  = Str::slug($request->title);
-           $post->type  = 'feature';
-           $post->lang  = $request->language ?? 'en';
-           $post->status  = $request->status ? 1 : 0;
-           $post->featured  = $request->featured ? 1 : 0;
-           $post->save();
+
+            $post = new Post;
+            $post->title = $request->title;
+            $post->slug  = Str::slug($request->title);
+            $post->type  = 'feature';
+            $post->lang  = $request->language ?? 'en';
+            $post->status  = $request->status ? 1 : 0;
+            $post->featured  = $request->featured ? 1 : 0;
+            $post->save();
 
             $post->excerpt()->create([
                 'post_id' => $post->id,
@@ -85,7 +84,7 @@ class FeaturesController extends Controller
                 'value' => $request->main_description,
             ]);
 
-            $preview = $this->saveFile($request,'preview_image');           
+            $preview = $this->saveFile($request, 'preview_image');
 
             $post->preview()->create([
                 'post_id' => $post->id,
@@ -93,7 +92,7 @@ class FeaturesController extends Controller
                 'value' => $preview,
             ]);
 
-            $banner = $this->saveFile($request,'banner_image');
+            $banner = $this->saveFile($request, 'banner_image');
 
             $post->banner()->create([
                 'post_id' => $post->id,
@@ -102,7 +101,6 @@ class FeaturesController extends Controller
             ]);
 
             DB::commit();
-
         } catch (Throwable $th) {
             DB::rollback();
 
@@ -114,7 +112,7 @@ class FeaturesController extends Controller
         return response()->json([
             'redirect' => route('admin.features.index'),
             'message'  => __('Feature created successfully...')
-        ]);  
+        ]);
     }
 
     /**
@@ -125,13 +123,12 @@ class FeaturesController extends Controller
      */
     public function edit($id)
     {
-        $info=Post::where('type','feature')->with('excerpt','preview','longDescription','banner')->findOrFail($id);
-        
-        $languages = get_option('languages',true);
+        $info = Post::where('type', 'feature')->with('excerpt', 'preview', 'longDescription', 'banner')->findOrFail($id);
 
-        return view('admin.features.edit', compact('info','languages'));
+        $languages = get_option('languages', true);
+
+        return view('admin.features.edit', compact('info', 'languages'));
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -142,7 +139,6 @@ class FeaturesController extends Controller
      */
     public function update(Request $request, $id)
     {
-       
         $request->validate([
             'title'          => 'required|max:150',
             'description'    => 'required|max:500',
@@ -150,61 +146,55 @@ class FeaturesController extends Controller
             'banner_image'   => 'image|max:2048',
         ]);
 
-       DB::beginTransaction();
+        DB::beginTransaction();
+
         try {
-            
-           $post =  Post::with('preview')->findorFail($id);
-           $post->title = $request->title;
-           $post->slug  = Str::slug($request->title);
-           $post->type  = 'feature';
-           $post->lang  = $request->language ?? 'en';
-           $post->status  = $request->status ? 1 : 0;
-           $post->featured  = $request->featured ? 1 : 0;
-           $post->save();
+            $post =  Post::with('preview')->findorFail($id);
+            $post->title = $request->title;
+            $post->slug  = Str::slug($request->title);
+            $post->type  = 'feature';
+            $post->lang  = $request->language ?? 'en';
+            $post->status  = $request->status ? 1 : 0;
+            $post->featured  = $request->featured ? 1 : 0;
+            $post->save();
 
-           $post->excerpt()->update([
-            'post_id' => $post->id,
-            'key' => 'excerpt',
-            'value' => $request->description,
-           ]);
+            $post->excerpt()->update([
+                'post_id' => $post->id,
+                'key' => 'excerpt',
+                'value' => $request->description,
+            ]);
 
-          
-           $post->longDescription()->update([
+            $post->longDescription()->update([
                 'post_id' => $post->id,
                 'key' => 'main_description',
                 'value' => $request->main_description,
             ]);
 
-           if ($request->hasFile('preview_image')) {
-               $preview = $this->saveFile($request,'preview_image');
+            if ($request->hasFile('preview_image')) {
+                $preview = $this->saveFile($request, 'preview_image');
 
-               !empty($post->preview) ? $this->removeFile($post->preview->value) : '';
+                !empty($post->preview) ? $this->removeFile($post->preview->value) : '';
 
-               $post->preview()->update([
+                $post->preview()->update([
                     'post_id' => $post->id,
                     'key' => 'preview',
                     'value' => $preview,
-               ]);
+                ]);
+            }
 
-           }
+            if ($request->hasFile('banner_image')) {
+                $banner = $this->saveFile($request, 'banner_image');
 
-           if ($request->hasFile('banner_image')) {
-               $banner = $this->saveFile($request,'banner_image');
+                !empty($post->banner) ? $this->removeFile($post->banner->value) : '';
 
-               !empty($post->banner) ? $this->removeFile($post->banner->value) : '';
-
-               $banner= $post->banner()->update([
+                $banner = $post->banner()->update([
                     'post_id' => $post->id,
                     'key' => 'banner',
                     'value' => $banner,
-               ]);
-
-              
-
-           }
+                ]);
+            }
 
             DB::commit();
-
         } catch (Throwable $th) {
             DB::rollback();
 
@@ -227,13 +217,13 @@ class FeaturesController extends Controller
      */
     public function destroy($id)
     {
-        $post = Post::where('type','feature')->with('preview','banner')->findorFail($id);
-        
+        $post = Post::where('type', 'feature')->with('preview', 'banner')->findorFail($id);
+
         if (!empty($post->preview)) {
             $this->removeFile($post->preview->value);
         }
 
-         if (!empty($post->banner)) {
+        if (!empty($post->banner)) {
             $this->removeFile($post->banner->value);
         }
 

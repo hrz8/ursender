@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Option;
-use Cache;
+use Illuminate\Support\Facades\Cache;
+
 class OptionController extends Controller
 {
-    
     /**
      * Update the specified resource in storage.
      *
@@ -19,10 +19,12 @@ class OptionController extends Controller
     public function update(Request $request, $key)
     {
         $option= Option::where('key',$key)->first();
+
         if (empty($option)) {
             $option = new Option;
             $option->key = $key;
         }
+
         $option->value = isset($request->is_array) ? json_encode($request->data) : $request->data;
         $option->save();
 
@@ -31,7 +33,5 @@ class OptionController extends Controller
         return response()->json([
                 'message' => __("Settings Updated Successfully..!!"),
             ]);
-
     }
-
 }

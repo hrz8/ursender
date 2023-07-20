@@ -14,7 +14,7 @@ class Smstransaction extends Model
         return $this->belongsTo('App\Models\Device');
     }
 
-     public function user()
+    public function user()
     {
         return $this->belongsTo('App\Models\User');
     }

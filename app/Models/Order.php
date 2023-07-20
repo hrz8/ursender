@@ -43,8 +43,6 @@ class Order extends Model
 
     public function gateway()
     {
-       return $this->belongsTo('App\Models\Gateway');
+        return $this->belongsTo('App\Models\Gateway');
     }
-
-  
 }

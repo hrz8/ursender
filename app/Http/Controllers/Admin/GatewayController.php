@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Gateway;
-use App\Models\Currency;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
@@ -12,16 +11,16 @@ class GatewayController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:gateways'); 
+        $this->middleware('permission:gateways');
     }
 
     public function index()
     {
         $gateways = Gateway::get();
-        $active_gateway = Gateway::where('status',1)->count();
+        $active_gateway = Gateway::where('status', 1)->count();
         $totalGateways = count($gateways);
-        $inactive_gateway = $totalGateways-$active_gateway;
-        return view('admin.gateway.index', compact('gateways','active_gateway','totalGateways','inactive_gateway'));
+        $inactive_gateway = $totalGateways - $active_gateway;
+        return view('admin.gateway.index', compact('gateways', 'active_gateway', 'totalGateways', 'inactive_gateway'));
     }
 
     public function create()
@@ -97,6 +96,7 @@ class GatewayController extends Controller
         } else {
             $gateway->data = $request->data ? json_encode($request->data) : '';
         }
+
         if ($request->hasFile('logo')) {
             if (!empty($gateway->logo)) {
                 $file = $gateway->logo;
@@ -126,7 +126,7 @@ class GatewayController extends Controller
         $gateway->test_mode  = $request->test_mode ?? 0;
         $gateway->status     = $request->status;
         $gateway->min_amount = $request->min_amount;
-        $gateway->max_amount = $request->max_amount;        
+        $gateway->max_amount = $request->max_amount;
         $gateway->save();
 
         return response()->json([

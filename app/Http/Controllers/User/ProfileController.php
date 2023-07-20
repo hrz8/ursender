@@ -4,11 +4,12 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Auth;
-use Storage;
+use Illuminate\Support\Str;
 use App\Models\User;
-use Hash;
-use Str;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+
 class ProfileController extends Controller
 {
     /**
@@ -21,18 +22,17 @@ class ProfileController extends Controller
         return view('user.profile.settings');
     }
 
-     /**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function authKey()
     {
-       return view('user.profile.auth-key');
+        return view('user.profile.auth-key');
     }
 
-   
-     /**
+    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -41,7 +41,7 @@ class ProfileController extends Controller
      */
     public function update(Request $request, $type)
     {
-        $user=User::findorFail(Auth::id());
+        $user = User::findorFail(Auth::id());
 
         if ($type == 'password') {
             $validatedData = $request->validate([
@@ -49,20 +49,17 @@ class ProfileController extends Controller
                 'oldpassword' => ['required', 'string'],
             ]);
 
-            $check=Hash::check($request->oldpassword,auth()->user()->password);
-            if ($check==true) {
-              $user->password= Hash::make($request->password);
-            }
-            else{
-               return response()->json([
+            $check = Hash::check($request->oldpassword, auth()->user()->password);
+            if ($check == true) {
+                $user->password = Hash::make($request->password);
+            } else {
+                return response()->json([
                     'message' => __('Old password is wrong'),
                 ], 403);
             }
 
-            $message = __('Password Updated Successfully');    
-        }
-
-        elseif ($type == 'auth-key') {
+            $message = __('Password Updated Successfully');
+        } elseif ($type == 'auth-key') {
             $user->authkey = $this->generateAuthKey();
             $user->save();
 
@@ -70,51 +67,48 @@ class ProfileController extends Controller
                 'redirect' => url('user/auth-key'),
                 'message' => __('Auth Key ReGenerated successfully.')
             ]);
-        }
-
-        else{
+        } else {
             $validatedData = $request->validate([
-                'email'     => 'required|email|unique:users,email,'.Auth::id(),
-                'phone'     => 'required|numeric|unique:users,phone,'.Auth::id(),
-                'name'      => ['required', 'string','max:100'],
-                'address'   => ['required', 'string','max:150'],
-                'avatar'    => ['image','max:1024'],
+                'email'     => 'required|email|unique:users,email,' . Auth::id(),
+                'phone'     => 'required|numeric|unique:users,phone,' . Auth::id(),
+                'name'      => ['required', 'string', 'max:100'],
+                'address'   => ['required', 'string', 'max:150'],
+                'avatar'    => ['image', 'max:1024'],
             ]);
 
-            $user->name=$request->name;
-            $user->email=$request->email; 
-            $user->phone=$request->phone;
-            $user->address=$request->address;
-            
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->phone = $request->phone;
+            $user->address = $request->address;
 
             if ($request->hasFile('avatar')) {
                 $file = $request->file('avatar');
                 $ext = $file->extension();
-                $filename = now()->timestamp.'.'.$ext;
+                $filename = now()->timestamp . '.' . $ext;
 
-                $path = 'uploads/' . \Auth::id() . date('/y') . '/' . date('m') . '/';
-                $filePath = $path.$filename;
+                $path = 'uploads/' . Auth::id() . date('/y') . '/' . date('m') . '/';
+                $filePath = $path . $filename;
                 Storage::put($filePath, file_get_contents($file));
+
                 if ($user->avatar != null) {
-                    $fileArr=explode('uploads', $user->avatar);
+                    $fileArr = explode('uploads', $user->avatar);
                     if (isset($fileArr[1])) {
-                      $oldavatar='uploads'.$fileArr[1];
-                      if (Storage::exists($oldavatar)) {
-                        Storage::delete($oldavatar);
-                      }
-                  }
+                        $oldavatar = 'uploads' . $fileArr[1];
+                        if (Storage::exists($oldavatar)) {
+                            Storage::delete($oldavatar);
+                        }
+                    }
                 }
+
                 $user->avatar = Storage::url($filePath);
             }
 
-            $message = __('General Settings Updated Successfully');    
+            $message = __('General Settings Updated Successfully');
         }
 
         $user->save();
 
-        return response()->json($message,200); 
-        
-
+        return response()->json($message, 200);
     }
 
 
@@ -123,10 +117,10 @@ class ProfileController extends Controller
         $rend = Str::random(50);
         $check = User::where('authkey', $rend)->first();
 
-        if($check == true){
+        if ($check == true) {
             $rend = $this->generateAuthKey();
         }
+
         return $rend;
     }
-
 }

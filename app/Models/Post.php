@@ -11,15 +11,15 @@ class Post extends Model
 
     public function categories()
     {
-        return $this->belongsToMany(Category::class,'postcategories','post_id','category_id');
+        return $this->belongsToMany(Category::class, 'postcategories', 'post_id', 'category_id');
     }
 
     public function tags()
     {
-        return $this->belongsToMany(Category::class,'postcategories','post_id','category_id')->where('type','tags');
+        return $this->belongsToMany(Category::class, 'postcategories', 'post_id', 'category_id')->where('type', 'tags');
     }
 
-     public function postcategories()
+    public function postcategories()
     {
         return $this->hasMany(Postcategory::class);
     }
@@ -39,7 +39,7 @@ class Post extends Model
         return $this->hasOne(Postmeta::class)->where('key', 'preview');
     }
 
-     public function banner()
+    public function banner()
     {
         return $this->hasOne(Postmeta::class)->where('key', 'banner');
     }
@@ -68,11 +68,11 @@ class Post extends Model
     {
         return $this->hasOne(Postmeta::class)->where('key', 'short_description');
     }
+
     public function longDescription()
     {
         return $this->hasOne(Postmeta::class)->where('key', 'main_description');
     }
-   
 
     public function pageMeta()
     {

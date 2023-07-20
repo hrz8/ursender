@@ -4,7 +4,6 @@ namespace App\Autoload;
 
 use Illuminate\Support\Str;
 
-
 trait HasUid
 {
     /**
@@ -16,13 +15,11 @@ trait HasUid
         parent::boot();
 
         static::creating(function ($model) {
-            if (empty($model->{$model->getKeyName()}))
-            {
+            if (empty($model->{$model->getKeyName()})) {
                 $model->{$model->getKeyName()} = Str::uuid()->toString();
             }
         });
     }
-
 
     /**
      * Override the getIncrementing() function to return false to tell
@@ -30,7 +27,7 @@ trait HasUid
      *
      * @return bool
      */
-    public function getIncrementing() : bool
+    public function getIncrementing(): bool
     {
         return false;
     }
@@ -41,7 +38,7 @@ trait HasUid
      *
      * @return string
      */
-    public function getKeyType() : string
+    public function getKeyType(): string
     {
         return 'string';
     }

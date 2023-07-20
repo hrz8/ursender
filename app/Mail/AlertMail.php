@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -13,7 +12,7 @@ class AlertMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $mailcontent;
+    public $mailContent;
     /**
      * Create a new message instance.
      *
@@ -21,7 +20,7 @@ class AlertMail extends Mailable
      */
     public function __construct($data)
     {
-        $this->mailcontent = $data;
+        $this->mailContent = $data;
     }
 
     /**
@@ -32,7 +31,7 @@ class AlertMail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: '['.ucfirst(env('APP_NAME')).'] Subscription revenueal alert',
+            subject: '[' . ucfirst(env('APP_NAME')) . '] Subscription revenueal alert',
         );
     }
 
@@ -47,7 +46,7 @@ class AlertMail extends Mailable
         return new Content(
             markdown: 'mails.renewalalert',
             with: [
-                'data' => $this->mailcontent,
+                'data' => $this->mailContent,
             ],
         );
     }

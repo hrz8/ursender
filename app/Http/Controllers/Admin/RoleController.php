@@ -10,8 +10,9 @@ use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
 {
-    public function __construct(){
-         $this->middleware('permission:roles'); 
+    public function __construct()
+    {
+        $this->middleware('permission:roles');
     }
 
     /**
@@ -21,10 +22,9 @@ class RoleController extends Controller
      */
     public function index()
     {
-       
-        $roles = Role::where('id','!=',1)->get();
+        $roles = Role::where('id', '!=', 1)->get();
+
         return view('admin.role.index', compact('roles'));
-        
     }
 
     /**
@@ -34,11 +34,10 @@ class RoleController extends Controller
      */
     public function create()
     {
-       
         $permisions = Permission::all();
         $permission_groups = User::getPermissionGroup();
+
         return view('admin.role.create', compact('permisions', 'permission_groups'));
-       
     }
 
     /**
@@ -60,10 +59,8 @@ class RoleController extends Controller
             $role->syncPermissions($permissions);
         }
 
-        return response()->json(['message'=> __('Role created successfully')]);
+        return response()->json(['message' => __('Role created successfully')]);
     }
-
-   
 
     /**
      * Show the form for editing the specified resource.
@@ -73,12 +70,12 @@ class RoleController extends Controller
      */
     public function edit($id)
     {
-        
+
         $role = Role::findById($id);
         $all_permissions = Permission::all();
         $permission_groups = User::getpermissionGroups();
+
         return view('admin.role.edit', compact('role', 'all_permissions', 'permission_groups'));
-        
     }
 
     /**
@@ -115,12 +112,11 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-
         Role::destroy($id);
+
         return response()->json([
             'redirect' => route('admin.role.index'),
-            'message'=> __('Role Removed')
+            'message' => __('Role Removed')
         ]);
-        
     }
 }

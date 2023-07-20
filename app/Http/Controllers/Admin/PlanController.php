@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Plan;
-use Auth;
+
 class PlanController extends Controller
 {
 
@@ -21,9 +21,9 @@ class PlanController extends Controller
      */
     public function index()
     {
-       $plans=Plan::latest()->withCount('activeuser')->paginate(20);
+        $plans = Plan::latest()->withCount('activeuser')->paginate(20);
 
-       return view('admin.plan.index',compact('plans'));
+        return view('admin.plan.index', compact('plans'));
     }
 
     /**
@@ -33,7 +33,7 @@ class PlanController extends Controller
      */
     public function create()
     {
-       return view('admin.plan.create');
+        return view('admin.plan.create');
     }
 
     /**
@@ -42,9 +42,8 @@ class PlanController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request){
-        
-
+    public function store(Request $request)
+    {
         $validated = $request->validate([
             'title' => 'required|max:100',
             'price' => 'required',
@@ -53,16 +52,16 @@ class PlanController extends Controller
         ]);
 
         if (isset($request->is_tria)) {
-          $validated = $request->validate([
-            'trial_days' => 'required',
-          ]);
+            $validated = $request->validate([
+                'trial_days' => 'required',
+            ]);
         }
 
         $plan                 = new Plan;
         $plan->title          = $request->title;
         $plan->price          = $request->price;
         $plan->labelcolor     = $request->labelcolor;
-        $plan->iconname       = $request->iconname;       
+        $plan->iconname       = $request->iconname;
         $plan->is_featured    = isset($request->is_featured) ? 1 : 0;
         $plan->is_recommended = isset($request->is_recommended) ? 1 : 0;
         $plan->is_trial       = isset($request->is_trial) ? 1 : 0;
@@ -78,7 +77,6 @@ class PlanController extends Controller
         ]);
     }
 
-
     /**
      * Show the form for editing the specified resource.
      *
@@ -88,14 +86,14 @@ class PlanController extends Controller
     public function edit($id)
     {
         $plan = Plan::findorFail($id);
-        $chatbot=$plan->data['chatbot'] ?? false;
-        $bulk_message=$plan->data['bulk_message'] ?? false;
-        $schedule_message=$plan->data['schedule_message'] ?? false;
-        $template_message=$plan->data['template_message'] ?? false;
-        $access_chat_list=$plan->data['access_chat_list'] ?? false;
-        $access_group_list=$plan->data['access_group_list'] ?? false;
+        $chatbot = $plan->data['chatbot'] ?? false;
+        $bulk_message = $plan->data['bulk_message'] ?? false;
+        $schedule_message = $plan->data['schedule_message'] ?? false;
+        $template_message = $plan->data['template_message'] ?? false;
+        $access_chat_list = $plan->data['access_chat_list'] ?? false;
+        $access_group_list = $plan->data['access_group_list'] ?? false;
 
-        return view('admin.plan.edit',compact('plan','chatbot','bulk_message','schedule_message','template_message','access_chat_list','access_group_list'));
+        return view('admin.plan.edit', compact('plan', 'chatbot', 'bulk_message', 'schedule_message', 'template_message', 'access_chat_list', 'access_group_list'));
     }
 
     /**
@@ -118,7 +116,7 @@ class PlanController extends Controller
         $plan->title          = $request->title;
         $plan->price          = $request->price;
         $plan->labelcolor     = $request->labelcolor;
-        $plan->iconname       = $request->iconname;      
+        $plan->iconname       = $request->iconname;
         $plan->is_featured    = isset($request->is_featured) ? 1 : 0;
         $plan->is_recommended = isset($request->is_recommended) ? 1 : 0;
         $plan->is_trial       = isset($request->is_trial) ? 1 : 0;
@@ -145,8 +143,8 @@ class PlanController extends Controller
         $plan = Plan::withCount('activeuser')->findorFail($id);
         if ($plan->activeuser_count != 0) {
             return response()->json([
-                    'message' =>  __('You cant delete this plan because this plan already useing some users'),
-                ], 403);
+                'message' =>  __('You cant delete this plan because this plan already useing some users'),
+            ], 403);
         }
         $plan->delete();
 
@@ -154,6 +152,5 @@ class PlanController extends Controller
             'redirect' => route('admin.plan.index'),
             'message'  => __('Plan deleted successfully.')
         ]);
-
     }
 }

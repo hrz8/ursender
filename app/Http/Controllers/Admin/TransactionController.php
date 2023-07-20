@@ -6,14 +6,16 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Smstransaction;
 use App\Traits\Notifications;
-use Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+
 class TransactionController extends Controller
 {
     use Notifications;
 
-    public function __construct(){
-         $this->middleware('permission:message-transactions'); 
+    public function __construct()
+    {
+        $this->middleware('permission:message-transactions');
     }
 
     /**
@@ -27,34 +29,28 @@ class TransactionController extends Controller
 
         if (!empty($request->search)) {
             if ($request->type == 'email') {
-                $transactions = $transactions->whereHas('user',function($q) use ($request){
-                    return $q->where('email',$request->search);
+                $transactions = $transactions->whereHas('user', function ($q) use ($request) {
+                    return $q->where('email', $request->search);
                 });
-            }
-            else{
-                $transactions = $transactions->where($request->type,'LIKE','%'.$request->search.'%');
+            } else {
+                $transactions = $transactions->where($request->type, 'LIKE', '%' . $request->search . '%');
             }
         }
 
-        $transactions = $transactions->with('user','device')->latest()->paginate(30);
+        $transactions = $transactions->with('user', 'device')->latest()->paginate(30);
         $type = $request->type ?? '';
 
-      
-        $total_messages=Smstransaction::count();
-        $today_messages=Smstransaction::where('user_id',Auth::id())
-                        ->whereRaw('date(created_at) = ?', [Carbon::now()->format('Y-m-d')] )
-                        ->count();
-        $last30_messages=Smstransaction::where('created_at', '>', now()
-                            ->subDays(30)
-                            ->endOfDay())
-                            ->count();
-       
-       
+        $total_messages = Smstransaction::count();
+        $today_messages = Smstransaction::where('user_id', Auth::id())
+            ->whereRaw('date(created_at) = ?', [Carbon::now()->format('Y-m-d')])
+            ->count();
+        $last30_messages = Smstransaction::where('created_at', '>', now()
+            ->subDays(30)
+            ->endOfDay())
+            ->count();
 
-        return view('admin.logs.transactions',compact('transactions','request','type','total_messages','today_messages','last30_messages'));
+        return view('admin.logs.transactions', compact('transactions', 'request', 'type', 'total_messages', 'today_messages', 'last30_messages'));
     }
-
-    
 
     /**
      * Remove the specified resource from storage.

@@ -4,13 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use Throwable;
 use App\Models\Post;
-use Illuminate\Support\str;
 use App\Models\Category;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\Postmeta;
 use Illuminate\Support\Facades\Artisan;
 use App\Traits\Uploader;
 use App\Http\Requests\BlogRequest;
@@ -18,14 +15,14 @@ use App\Actions\Blog;
 
 class BlogController extends Controller
 {
-     use Uploader;
+    use Uploader;
 
     public function __construct()
     {
         $this->middleware('permission:blogs');
     }
 
-     /**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -41,14 +38,14 @@ class BlogController extends Controller
             ->latest()
             ->paginate(20);
 
-        $type = $request->type ?? '';    
+        $type = $request->type ?? '';
 
-        $totalPosts= Post::query()->where('type','blog')->count();
-        $totalActivePosts= Post::query()->where('type','blog')->where('status',1)->count();
-        $totalInActivePosts= Post::query()->where('type','blog')->where('status',0)->count();
-       
-        return view('admin.blogs.index', compact('posts','totalPosts','totalActivePosts','totalInActivePosts','request'));
-    } 
+        $totalPosts = Post::query()->where('type', 'blog')->count();
+        $totalActivePosts = Post::query()->where('type', 'blog')->where('status', 1)->count();
+        $totalInActivePosts = Post::query()->where('type', 'blog')->where('status', 0)->count();
+
+        return view('admin.blogs.index', compact('posts', 'totalPosts', 'totalActivePosts', 'totalInActivePosts', 'request'));
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -58,10 +55,10 @@ class BlogController extends Controller
     public function create()
     {
         $tags = Category::whereType('tags')->pluck('title', 'id');
-        $categories = Category::whereType('blog_category')->where('status',1)->pluck('title', 'id');
-        $languages = get_option('languages',true);
+        $categories = Category::whereType('blog_category')->where('status', 1)->pluck('title', 'id');
+        $languages = get_option('languages', true);
 
-        return view('admin.blogs.create', compact('tags', 'categories','languages'));
+        return view('admin.blogs.create', compact('tags', 'categories', 'languages'));
     }
 
     /**
@@ -76,8 +73,8 @@ class BlogController extends Controller
 
         DB::beginTransaction();
         try {
-            
-             $blog = $blog->create($request);
+
+            $blog = $blog->create($request);
 
             DB::commit();
 
@@ -103,20 +100,20 @@ class BlogController extends Controller
      */
     public function edit($id)
     {
-        $info=Post::where('type','blog')->with('postcategories','preview','seo','shortDescription','longDescription','seo')->findOrFail($id);
+        $info = Post::where('type', 'blog')->with('postcategories', 'preview', 'seo', 'shortDescription', 'longDescription', 'seo')->findOrFail($id);
         $tags = Category::whereType('tags')->pluck('title', 'id');
         $categories = Category::whereType('blog_category')->pluck('title', 'id');
 
-        $cats=[];
+        $cats = [];
         foreach ($info->postcategories as $key => $cat) {
-           array_push($cats, $cat->category_id);
+            array_push($cats, $cat->category_id);
         }
-        
 
-        $seo=json_decode($info->seo->value ?? '');
-        $languages = get_option('languages',true);
 
-        return view('admin.blogs.edit', compact('info','tags','categories','cats','seo','languages'));
+        $seo = json_decode($info->seo->value ?? '');
+        $languages = get_option('languages', true);
+
+        return view('admin.blogs.edit', compact('info', 'tags', 'categories', 'cats', 'seo', 'languages'));
     }
 
     /**
@@ -126,17 +123,16 @@ class BlogController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(BlogRequest $request,$id, Blog $blog)
+    public function update(BlogRequest $request, $id, Blog $blog)
     {
-      
         $validated = $request->validated();
 
         DB::beginTransaction();
         try {
-             
-             $blog = $blog->update($request,$id);
 
-           DB::commit();
+            $blog = $blog->update($request, $id);
+
+            DB::commit();
 
             return response()->json([
                 'message' => __("Blog Updated Successfully"),
@@ -151,7 +147,7 @@ class BlogController extends Controller
         }
     }
 
-     /**
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
@@ -163,12 +159,12 @@ class BlogController extends Controller
             $this->removeFile($blog->preview->value);
         }
         if (!empty($blog->seo)) {
-            $seo=json_decode($blog->seo->value);
+            $seo = json_decode($blog->seo->value);
             if (!empty($seo->image ?? '')) {
-                 $this->removeFile($seo->image);
+                $this->removeFile($seo->image);
             }
         }
-        
+
         $blog->delete();
 
         Artisan::call('cache:clear');
@@ -179,7 +175,8 @@ class BlogController extends Controller
         ]);
     }
 
-    public function massDestroy(Request $request){
+    public function massDestroy(Request $request)
+    {
         $request->validate([
             'id' => ['required', 'array']
         ]);
@@ -190,6 +187,5 @@ class BlogController extends Controller
             'message' => __('Blog Posts Deleted Successfully'),
             'redirect' => route('admin.blog.index')
         ]);
-
     }
 }

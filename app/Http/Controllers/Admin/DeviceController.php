@@ -3,17 +3,19 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Models\Device;
 use App\Traits\Notifications;
-use Auth;
-use Http;
+use Exception;
+
 class DeviceController extends Controller
 {
     use Notifications;
 
-    public function __construct(){
-         $this->middleware('permission:device'); 
+    public function __construct()
+    {
+        $this->middleware('permission:device');
     }
 
     /**
@@ -27,23 +29,22 @@ class DeviceController extends Controller
 
         if (!empty($request->search)) {
             if ($request->type == 'email') {
-                $devices = $devices->whereHas('user',function($q) use ($request){
-                    return $q->where('email',$request->search);
+                $devices = $devices->whereHas('user', function ($q) use ($request) {
+                    return $q->where('email', $request->search);
                 });
-            }
-            else{
-                $devices = $devices->where($request->type,'LIKE','%'.$request->search.'%');
+            } else {
+                $devices = $devices->where($request->type, 'LIKE', '%' . $request->search . '%');
             }
         }
 
         $devices = $devices->withCount('smstransaction')->with('user')->latest()->paginate(30);
         $type = $request->type ?? '';
 
-        $totalDevices= Device::count();
-        $totalActiveDevices= Device::where('status',1)->count();
-        $totalInactiveDevices= Device::where('status',0)->count();
+        $totalDevices = Device::count();
+        $totalActiveDevices = Device::where('status', 1)->count();
+        $totalInactiveDevices = Device::where('status', 0)->count();
 
-        return view('admin.devices.index',compact('devices','request','type','totalDevices','totalActiveDevices','totalInactiveDevices'));
+        return view('admin.devices.index', compact('devices', 'request', 'type', 'totalDevices', 'totalActiveDevices', 'totalInactiveDevices'));
     }
 
 
@@ -66,11 +67,10 @@ class DeviceController extends Controller
         $this->createNotification($notification);
 
         try {
-           if ($device->status == 1) {
-            Http::delete(env('WA_SERVER_URL').'/sessions/delete/device_'.$device->id);
-         }
+            if ($device->status == 1) {
+                Http::delete(env('WA_SERVER_URL') . '/sessions/delete/device_' . $device->id);
+            }
         } catch (Exception $e) {
-            
         }
 
         return response()->json([

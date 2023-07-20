@@ -4,8 +4,9 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Session;
-use App;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Session;
+
 class EnvironmentMiddleware
 {
     /**
@@ -17,7 +18,7 @@ class EnvironmentMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        Session::has('locale') ? App::setlocale(Session::get('locale')) : App::setlocale(env('DEFAULT_LANG','en'));
+        Session::has('locale') ? App::setlocale(Session::get('locale')) : App::setlocale(env('DEFAULT_LANG', 'en'));
 
         return $next($request);
     }

@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Models;
-use App\Autoload\HasUid;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Str;
+use Illuminate\Support\Str;
+
 class Template extends Model
 {
     use HasFactory;
@@ -22,16 +23,16 @@ class Template extends Model
         'status',
     ];
 
-    protected $casts=[
-        'body'=>'json'
+    protected $casts = [
+        'body' => 'json'
     ];
 
     protected static function boot()
     {
         parent::boot();
 
-        
-        static::creating(function($model){
+
+        static::creating(function ($model) {
             $model->uuid = Str::uuid()->toString();
         });
     }

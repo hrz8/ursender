@@ -4,8 +4,9 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Auth;
-use Session;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+
 class AdminMiddleware
 {
     /**
@@ -18,13 +19,12 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next)
     {
         if (Auth::check() && Auth::user()->role == 'admin' &&  Auth::user()->status == 1) {
-           return $next($request);
+            return $next($request);
+        } elseif (Auth::check() && Auth::user()->status != 1) {
+            Auth::logout();
+            Session::flush('auth-error', __('Your Account Is Deactivated'));
         }
-        elseif (Auth::check() && Auth::user()->status != 1) {
-         Auth::logout();
-         Session::flush('auth-error',__('Your Account Is Deactivated'));
-        }
-        
+
         return redirect('/login');
     }
 }
