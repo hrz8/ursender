@@ -106,7 +106,7 @@ class DeviceController extends Controller
         abort_if(empty($device), 404);
 
         $id = $device->id;
-        $response = Http::post(env('WA_SERVER_URL') . '/sessions/add', [
+        $response = Http::post(env('WA_SERVICE_URL') . '/sessions/add', [
             'id'       => 'device_' . $id,
             'isLegacy' => false
         ]);
@@ -132,7 +132,7 @@ class DeviceController extends Controller
         abort_if(empty($device), 404);
 
         $id = $device->id;
-        $response = Http::get(env('WA_SERVER_URL') . '/sessions/status/device_' . $id);
+        $response = Http::get(env('WA_SERVICE_URL') . '/sessions/status/device_' . $id);
 
         $device->status = $response->status() == 200 ? 1 : 0;
         if ($response->status() == 200) {
@@ -253,7 +253,7 @@ class DeviceController extends Controller
         $device->save();
 
         $id = $device->id;
-        $response = Http::delete(env('WA_SERVER_URL') . '/sessions/delete/device_' . $id);
+        $response = Http::delete(env('WA_SERVICE_URL') . '/sessions/delete/device_' . $id);
 
         return response()->json(['message' => __('Congratulations! Your Device Successfully Logout')]);
     }
@@ -331,7 +331,7 @@ class DeviceController extends Controller
         abort_if(empty($device), 404);
         try {
             if ($device->status == 1) {
-                Http::delete(env('WA_SERVER_URL') . '/sessions/delete/device_' . $device->id);
+                Http::delete(env('WA_SERVICE_URL') . '/sessions/delete/device_' . $device->id);
             }
         } catch (\Exception $e) {
         }

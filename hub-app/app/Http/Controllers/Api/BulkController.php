@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Requests\Bulkrequest;
 use App\Models\User;
 use App\Models\App;
@@ -115,6 +116,8 @@ class BulkController extends Controller
      */
     public function webHook(Request $request, $device_id)
     {
+        Log::info('[App\Http\Controllers\Api][BulkController@webHook] request body' . $request);
+
         $session = $device_id;
         $device_id = str_replace('device_', '', $device_id);
 
@@ -174,6 +177,7 @@ class BulkController extends Controller
                             ], 200);
                         }
                     }
+
                     break;
                 }
             }

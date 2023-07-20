@@ -63,11 +63,11 @@ class DeveloperSettingsController extends Controller
         } elseif ($id == 'wa-settings') {
             $wa_server_url = preg_replace('/\s+/', '', $request->wa_server_url);
 
-            $this->editEnv('WA_SERVER_URL', $wa_server_url);
-            $this->editEnv('WA_SERVER_HOST', $request->host);
-            $this->editEnv('WA_SERVER_PORT', $request->port);
-            $this->editEnv('WA_SERVER_MAX_RETRIES', $request->MAX_RETRIES);
-            $this->editEnv('WA_SERVER_RECONNECT_INTERVAL', $request->reconnect_interval);
+            $this->editEnv('WA_SERVICE_URL', $wa_server_url);
+            $this->editEnv('WA_SERVICE_HOST', $request->host);
+            $this->editEnv('WA_SERVICE_PORT', $request->port);
+            $this->editEnv('WA_SERVICE_MAX_RETRIES', $request->MAX_RETRIES);
+            $this->editEnv('WA_SERVICE_RECONNECT_INTERVAL', $request->reconnect_interval);
 
             $this->editEnv('MAX_RETRIES', $request->MAX_RETRIES);
             $this->editEnv('RECONNECT_INTERVAL', $request->reconnect_interval);

@@ -80,7 +80,7 @@ class DashboardController extends Controller
 
     public function waServerStatus()
     {
-        $response = Http::get(env('WA_SERVER_URL') . '/sessions/server-status');
+        $response = Http::get(env('WA_SERVICE_URL') . '/sessions/server-status');
 
         return response()->json(['status' => $response->status()]);
     }

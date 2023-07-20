@@ -9,8 +9,8 @@ import chalk from 'chalk'
 
 const app = express()
 
-const host = process.env.WA_SERVER_HOST || undefined
-const port = parseInt(process.env.WA_SERVER_PORT ?? 3300)
+const host = process.env.SERVER_HOST || '127.0.0.1'
+const port = parseInt(process.env.SERVER_PORT ?? 3300)
 
 app.use(cors())
 app.use(

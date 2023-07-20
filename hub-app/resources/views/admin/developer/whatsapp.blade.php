@@ -28,31 +28,31 @@
                  <div class="from-group row mt-2">
                     <label class="col-lg-12">{{ __('Whatsapp Server Url') }}</label>
                     <div class="col-lg-12">
-                        <input type="text" name="wa_server_url"  value="{{ env('WA_SERVER_URL') }}" required="" class="form-control">
+                        <input type="text" name="wa_server_url"  value="{{ env('WA_SERVICE_URL') }}" required="" class="form-control">
                     </div>
                 </div> 
                 <div class="from-group row mt-2">
                     <label class="col-lg-12">{{ __('Whatsapp Server Host') }}</label>
                     <div class="col-lg-12">
-                        <input type="text" name="host"  value="{{ env('WA_SERVER_HOST') }}" required="" class="form-control">
+                        <input type="text" name="host"  value="{{ env('WA_SERVICE_HOST') }}" required="" class="form-control">
                     </div>
                 </div> 
                 <div class="from-group row mt-2">
                     <label class="col-lg-12">{{ __('Whatsapp Server Port') }}</label>
                     <div class="col-lg-12">
-                        <input type="text" name="port"  value="{{ env('WA_SERVER_PORT') }}" required="" class="form-control">
+                        <input type="text" name="port"  value="{{ env('WA_SERVICE_PORT') }}" required="" class="form-control">
                     </div>
                 </div> 
                 <div class="from-group row mt-2">
                     <label class="col-lg-12">{{ __('Max Retties') }}</label>
                     <div class="col-lg-12">
-                        <input type="number" name="MAX_RETRIES"  value="{{ env('WA_SERVER_MAX_RETRIES') }}" required="" class="form-control">
+                        <input type="number" name="MAX_RETRIES"  value="{{ env('WA_SERVICE_MAX_RETRIES') }}" required="" class="form-control">
                     </div>
                 </div> 
                 <div class="from-group row mt-2">
                     <label class="col-lg-12">{{ __('Reconnect Interval') }}</label>
                     <div class="col-lg-12">
-                        <input type="number" name="reconnect_interval"  value="{{ env('WA_SERVER_RECONNECT_INTERVAL') }}" required="" class="form-control">
+                        <input type="number" name="reconnect_interval"  value="{{ env('WA_SERVICE_RECONNECT_INTERVAL') }}" required="" class="form-control">
                     </div>
                 </div> 
                <div class="from-group row mt-2">

@@ -8,6 +8,8 @@ use App\Models\User;
 use App\Models\Device;
 use App\Models\Template;
 use App\Models\Smstransaction;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 trait Whatsapp
 {
@@ -30,7 +32,7 @@ trait Whatsapp
         $formatedBody = $filter == false ? $this->formatArray($data, $message, $type) : $data;
 
         //get server url
-        $whatsServer = env('WA_SERVER_URL');
+        $whatsServer = env('WA_SERVICE_URL');
 
         // formatting array before sending data to server
         $body['receiver'] = $reciver;
@@ -51,7 +53,7 @@ trait Whatsapp
             }
 
             return $responseData;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $responseData['status'] = 403;
             return $responseData;
         }
@@ -60,7 +62,7 @@ trait Whatsapp
     private function getChats($device_id)
     {
         $session_id = 'device_' . $device_id;
-        $whatsServer = env('WA_SERVER_URL');
+        $whatsServer = env('WA_SERVICE_URL');
 
         $response = Http::get($whatsServer . '/chats?id=' . $session_id);
         $status = $response->status();
@@ -90,7 +92,7 @@ trait Whatsapp
     public function getGroupList($device_id)
     {
         $session_id = 'device_' . $device_id;
-        $whatsServer = env('WA_SERVER_URL');
+        $whatsServer = env('WA_SERVICE_URL');
 
         $response = Http::get($whatsServer . '/groups?id=' . $session_id);
         $status = $response->status();
@@ -135,7 +137,7 @@ trait Whatsapp
         $formatedBody = $filter == false ? $this->formatArray($data, $message, $type) : $data;
 
         //get server url
-        $whatsServer = env('WA_SERVER_URL');
+        $whatsServer = env('WA_SERVICE_URL');
 
         // formatting array before sending data to server
         $body['receiver'] = $reciver;
@@ -156,7 +158,7 @@ trait Whatsapp
             }
 
             return $responseData;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $responseData['status'] = 403;
             return $responseData;
         }
@@ -318,7 +320,7 @@ trait Whatsapp
         $ext = $file->extension();
         $filename = now()->timestamp . '.' . $ext;
 
-        $path = 'uploads/message/' . \Auth::id() . date('/y') . '/' . date('m') . '/';
+        $path = 'uploads/message/' . Auth::id() . date('/y') . '/' . date('m') . '/';
         $filePath = $path . $filename;
 
 

@@ -68,7 +68,7 @@ class DeviceController extends Controller
 
         try {
             if ($device->status == 1) {
-                Http::delete(env('WA_SERVER_URL') . '/sessions/delete/device_' . $device->id);
+                Http::delete(env('WA_SERVICE_URL') . '/sessions/delete/device_' . $device->id);
             }
         } catch (Exception $e) {
         }

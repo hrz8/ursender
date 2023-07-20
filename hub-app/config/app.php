@@ -54,7 +54,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://whatsserver.test'),
+    'url' => env('APP_URL'),
 
     'asset_url' => env('ASSET_URL'),
 

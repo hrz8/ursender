@@ -176,7 +176,7 @@ const createSession = async (sessionId, isLegacy = false, credentials = null) =>
 
 setInterval(() => {
     const siteKey = process.env.SITE_KEY ?? null
-    const appUrl = process.env.APP_URL ?? null
+    const appUrl = process.env.WEBHOOK_SERVICE_URL ?? null
     const url = 'https://devapi.lpress.xyz/api/verify-check'
 
     axios
@@ -194,12 +194,12 @@ const getSession = (sessionId) => {
 }
 
 const setDeviceStatus = (sessionId, status) => {
-    const endpoint = process.env.APP_URL + '/api/set-device-status/' + sessionId + '/' + status
+    const endpoint = process.env.WEBHOOK_SERVICE_URL + '/api/set-device-status/' + sessionId + '/' + status
     axios.post(endpoint)
 }
 
 const sentWebHook = (sessionId, webHookData) => {
-    const apiEndpoint = process.env.APP_URL + '/api/send-webhook/' + sessionId
+    const apiEndpoint = process.env.WEBHOOK_SERVICE_URL + '/api/send-webhook/' + sessionId
 
     try {
         axios
